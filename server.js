@@ -13,19 +13,27 @@ let polls = [
   }
 ];
 
+function isValid(poll){
+  return (poll.question !== "")
+}
+
 server.addService(pollsProto.polls.PollService.service, {
   list: (call, cb) => {
-    console.log(polls);
     cb(null, polls);
   },
-  insert: (call, cb) => { polls.push(poll); cb(null, poll) },
+  insert: (call, cb) => { 
+    let poll = call.request;
+    if(!isValid(poll)) return cb(new Error("invalid poll"));
+    polls.push(poll);
+    cb(null, poll)
+  },
   listOne: (call, cb) => cb(null, polls.find( p => p.id === call.request.id)),
   updateOne: (call, cb) => {
     if(!call.request.id) return cb(null, {}); 
 
     const idKey = call.request.id;
     console.log(idKey);
-   // call.request.id = null;
+    call.request.id = null;
     let poll = polls.find( p => p.id === call.request[idKey]);
     Object.keys(call.request).filter((key) => {
       console.log(key);
