@@ -23,7 +23,10 @@ server.addService(pollsProto.polls.PollService.service, {
   },
   insert: (call, cb) => { 
     let poll = call.request;
-    if(!isValid(poll)) return cb(new Error("invalid poll"));
+    if(!isValid(poll)) return cb({
+      code: grpc.status.INVALID_ARGUMENT,
+      details: 'Not found'
+    });
     polls.push(poll);
     cb(null, poll)
   },
@@ -44,6 +47,14 @@ server.addService(pollsProto.polls.PollService.service, {
     });
 
     cb(null, poll);
+  },
+  deleteOne: (call, cb) => {
+    if(!call.request.id) return cb({ code: grpc.status.NOT_FOUND, details: 'Not found'});
+    const id = call.request.id;
+    let poll = polls.find( p => p.id === id );
+    if(!poll) return cb({ code: grpc.status.NOT_FOUND, details: 'NOT found'});
+    polls = polls.filter( p => p.id !== id );  //lolz
+    cb(null, {});
   }
 });
 
