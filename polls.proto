@@ -19,7 +19,7 @@ message id {
 }
 
 message Poll {
-    required int32 id = 1;
+    int32 id = 1;
     string question = 2;
     int32 numUpvotes = 3;
     bool polleeCanAddOptions = 4;
