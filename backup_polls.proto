@@ -19,12 +19,24 @@ message id {
 }
 
 message Poll {
-    int32 id = 1;
-    string question = 2;
-    int32 numUpvotes = 3;
-    bool polleeCanAddOptions = 4;
-    bool polleeCanMultiVote = 5;
-    bool polleeCanComment = 6;
+  oneof id {
+    int32 id_val = 1;
+  }
+  oneof question {
+    string question_val = 2;
+  }
+  oneof numUpvotes {
+    int32 numUpvotes_val = 3;
+  } 
+  oneof polleeCanAddOptions {
+    bool polleeCanAddOptions_val = 4;
+  }
+  oneof polleeCanMultiVote {
+    bool polleeCanMultiVote_val = 5;
+  }
+  oneof polleeCanComment {
+    bool polleeCanComment_val = 6;
+  }
 }
 
 message Message {

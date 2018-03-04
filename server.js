@@ -4,12 +4,12 @@ const server = new grpc.Server();
 
 let polls = [
   {
-    id: { id_val: 123 }, 
-    question: { question_val: "What is a poll question?" },
-    numUpvotes: { numUpvotes_val: 4 },
-    polleeCanAddOptions: { polleeCanAddOptions_val: true},
-    polleeCanMultiVote: { polleeCanMultiVote_val: true},
-    polleeCanComment: { polleeCanComment_val: true}
+    id: 123, 
+    question: "What is a poll question?",
+    numUpvotes: 4 ,
+    polleeCanAddOptions: true,
+    polleeCanMultiVote: true,
+    polleeCanComment: true
   }
 ];
 
@@ -25,7 +25,7 @@ server.addService(pollsProto.polls.PollService.service, {
 
     const idKey = call.request.id;
     console.log(idKey);
-    call.request.id = null;
+   // call.request.id = null;
     let poll = polls.find( p => p.id === call.request[idKey]);
     Object.keys(call.request).filter((key) => {
       console.log(key);
