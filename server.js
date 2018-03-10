@@ -22,23 +22,22 @@ server.addService(pollsProto.polls.PollService.service, {
     cb(null, polls);
   },
   create: (call, cb) => { 
-    // havent updated with oneof trick to differentiate between default and unsent values..
     let poll = call.request;
-    if(!isValid(poll)) return cb({
+    if(!poll.question) return cb({
       code: grpc.status.INVALID_ARGUMENT,
       details: 'You must include a poll question'
     });
+   
+    poll.id = polls.length+1;
     polls.push(poll);
     cb(null, poll)
   },
   find: (call, cb) => {
-    const idKey = call.request.id;
-    console.log(call.request);
-    if(!idKey) return cb({
+    const id = call.request.id;
+    if(!id) return cb({
       code: grpc.status.INVALID_ARGUMENT,
       details: 'You must include a poll id'
     });
-    const id = call.request[idKey + '_val'];
     const poll = polls.find( p => p.id === id );
     if(!poll) return cb({
       code: grpc.status.NOT_FOUND,
@@ -48,22 +47,24 @@ server.addService(pollsProto.polls.PollService.service, {
   },
   update: (call, cb) => {
     const pollReq = call.request;
-    const idKey = pollReq.id;
-    if(idKey === null) return cb({         // this may have to change to check for null
+    const idKey = pollReq.idKey;
+    if(!idKey) return cb({
       code: grpc.status.INVALID_ARGUMENT,
       details: 'You must include a poll id'
     }); 
-    const id = pollReq[idKey + '_val'];
-    pollReq.id = null;
-    let poll = polls.find( p => p.id === pollReq[idKey]); 
-    Object.keys(pollReq).filter((key) => {                     // only look at fields that were included in request
-      console.log(key);
-      return key !== null
-    }).map((existingKey) => {              	    	       // update poll obj so those fields's values are updated 
-      console.log(existingKey);
-      poll[existingKey] = pollReq[existingKey + '_val']; 
+    const id = pollReq[idKey];
+    let poll = polls.find(p => p.id === pollReq[idKey]); 
+    if(!poll) return cb({
+      code: grpc.status.NOT_FOUND,
+      details: 'Poll w/ id: ' + id + ' Not found'
+    })
+    Object.keys(pollReq).filter((key) => {
+      return key !== null && key !== 'id'
+    }).map((keyName) => {
+      const key = pollReq[keyName];
+      poll[key] = pollReq[key]; 
     });
-
+    console.log(poll);
     cb(null, poll);
   },
   delete: (call, cb) => {

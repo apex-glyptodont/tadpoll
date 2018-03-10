@@ -4,23 +4,21 @@ package polls;
 
 service PollService {
 
-  rpc Create (PollSubset) returns (Poll) {}
-  rpc Find (IdSubset) returns (Poll) {}
-  rpc Update (PollSubset) returns (Poll) {}
-  rpc Delete (IdSubset) returns (Empty) {}
+  rpc Create (PollRequestCreate) returns (PollResponse) {}
+  rpc Find (Id) returns (PollResponse) {}
+  rpc Update (PollRequestUpdate) returns (PollResponse) {}
+  rpc Delete (Id) returns (PollResponse) {}
 
   rpc List (Empty) returns (PollList) {}
 }
 
 message Empty {}
 
-message IdSubset {
-  oneof id {
-    int32 id_val = 1;
-  }
+message Id {
+  int32 id = 1;
 }
 
-message Poll {
+message PollResponse {
     int32 id = 1;
     string question = 2;
     int32 numUpvotes = 3;
@@ -29,24 +27,32 @@ message Poll {
     bool polleeCanComment = 6;
 }
 
-message PollSubset {
-  oneof id {
-    int32 id_val = 1;
+message PollRequestCreate {
+    string question = 1;
+    int32 numUpvotes = 2;
+    bool polleeCanAddOptions = 3;
+    bool polleeCanMultiVote = 4;
+    bool polleeCanComment = 5;
+}
+
+message PollRequestUpdate {
+  oneof idKey {
+    int32 id = 6;
   }
-  oneof question {
-    string question_val = 2;
+  oneof questionKey {
+    string question = 1;
   }
-  oneof numUpvotes {
-    int32 numUpvotes_val = 3;
+  oneof numUpvotesKey {
+    int32 numUpvotes = 2;
   } 
-  oneof polleeCanAddOptions {
-    bool polleeCanAddOptions_val = 4;
+  oneof polleeCanAddOptionsKey {
+    bool polleeCanAddOptions = 3;
   }
-  oneof polleeCanMultiVote {
-    bool polleeCanMultiVote_val = 5;
+  oneof polleeCanMultiVoteKey {
+    bool polleeCanMultiVote = 4;
   }
-  oneof polleeCanComment {
-    bool polleeCanComment_val = 6;
+  oneof polleeCanCommentKey {
+    bool polleeCanComment = 5;
   }
 }
 
@@ -99,6 +105,6 @@ message OptionList {
 }
 
 message PollList {
-  repeated Poll polls = 1;
+  repeated PollResponse polls = 1;
 }
 
