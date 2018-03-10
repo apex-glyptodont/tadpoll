@@ -4,18 +4,20 @@ package polls;
 
 service PollService {
 
-  rpc Insert (Poll) returns (Poll) {}
-  rpc ListOne (id) returns (Poll) {}
-  rpc UpdateOne (PollSubset) returns (Poll) {}
-  rpc DeleteOne (id) returns (Empty) {}
+  rpc Create (PollSubset) returns (Poll) {}
+  rpc Find (IdSubset) returns (Poll) {}
+  rpc Update (PollSubset) returns (Poll) {}
+  rpc Delete (IdSubset) returns (Empty) {}
 
   rpc List (Empty) returns (PollList) {}
 }
 
 message Empty {}
 
-message id {
-  int32 id = 1;
+message IdSubset {
+  oneof id {
+    int32 id_val = 1;
+  }
 }
 
 message Poll {
@@ -55,14 +57,48 @@ message Message {
   string tag = 4;
 }
 
+message MessageSubset {
+  oneof id {
+    int32 id_val = 1;
+  }
+  oneof text {
+    string text_val = 2;
+  }
+  oneof timestamp {
+    string timestamp_val = 3;
+  }
+  oneof tag {
+    string tag_val = 4;
+  } 
+}
+
 message Option {
   int32 id = 1;
   string text = 2;
   int32 numVotes = 3;
 }
 
+message OptionSubset {
+  oneof id {
+    int32 id_val = 1;
+  }
+  oneof text {
+    string text_val = 2;
+  }
+  oneof numVotes {
+    int32 numVotes_val = 3;
+  }
+}
+
+message MessageList {
+  repeated Message messages = 1;
+}
+
+message OptionList {
+  repeated Option options = 1;
+}
+
 message PollList {
   repeated Poll polls = 1;
 }
-
 
