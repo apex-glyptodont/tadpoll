@@ -79,7 +79,7 @@ server.addService(pollsProto.polls.PollService.service, {
   }
 });
 
-server.bind('0.0.0.0:50051',
+server.bind('0.0.0.0:80',
   grpc.ServerCredentials.createInsecure());
 
 console.log('Server running at http://0.0.0.0:50051');
